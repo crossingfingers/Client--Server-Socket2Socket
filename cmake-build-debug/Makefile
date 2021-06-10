@@ -168,32 +168,32 @@ main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/main.c.s
 .PHONY : main.c.s
 
-pcc_client..obj: pcc_client..c.obj
+pcc_client.obj: pcc_client.c.obj
 
-.PHONY : pcc_client..obj
+.PHONY : pcc_client.obj
 
 # target to build an object file
-pcc_client..c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/pcc_client..c.obj
-.PHONY : pcc_client..c.obj
+pcc_client.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/pcc_client.c.obj
+.PHONY : pcc_client.c.obj
 
-pcc_client..i: pcc_client..c.i
+pcc_client.i: pcc_client.c.i
 
-.PHONY : pcc_client..i
+.PHONY : pcc_client.i
 
 # target to preprocess a source file
-pcc_client..c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/pcc_client..c.i
-.PHONY : pcc_client..c.i
+pcc_client.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/pcc_client.c.i
+.PHONY : pcc_client.c.i
 
-pcc_client..s: pcc_client..c.s
+pcc_client.s: pcc_client.c.s
 
-.PHONY : pcc_client..s
+.PHONY : pcc_client.s
 
 # target to generate assembly for a file
-pcc_client..c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/pcc_client..c.s
-.PHONY : pcc_client..c.s
+pcc_client.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\OS_HW5.dir\build.make CMakeFiles/OS_HW5.dir/pcc_client.c.s
+.PHONY : pcc_client.c.s
 
 pcc_server.obj: pcc_server.c.obj
 
@@ -234,9 +234,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
-	@echo ... pcc_client..obj
-	@echo ... pcc_client..i
-	@echo ... pcc_client..s
+	@echo ... pcc_client.obj
+	@echo ... pcc_client.i
+	@echo ... pcc_client.s
 	@echo ... pcc_server.obj
 	@echo ... pcc_server.i
 	@echo ... pcc_server.s

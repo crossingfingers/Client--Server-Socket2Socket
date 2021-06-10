@@ -5,7 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
   "C:/Users/divin/CLionProjects/OS_HW5/main.c" "C:/Users/divin/CLionProjects/OS_HW5/cmake-build-debug/CMakeFiles/OS_HW5.dir/main.c.obj"
-  "C:/Users/divin/CLionProjects/OS_HW5/pcc_client..c" "C:/Users/divin/CLionProjects/OS_HW5/cmake-build-debug/CMakeFiles/OS_HW5.dir/pcc_client..c.obj"
+  "C:/Users/divin/CLionProjects/OS_HW5/pcc_client.c" "C:/Users/divin/CLionProjects/OS_HW5/cmake-build-debug/CMakeFiles/OS_HW5.dir/pcc_client.c.obj"
   "C:/Users/divin/CLionProjects/OS_HW5/pcc_server.c" "C:/Users/divin/CLionProjects/OS_HW5/cmake-build-debug/CMakeFiles/OS_HW5.dir/pcc_server.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

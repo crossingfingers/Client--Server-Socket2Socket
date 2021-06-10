@@ -88,18 +88,18 @@ CMakeFiles/OS_HW5.dir/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/OS_HW5.dir/main.c.s"
 	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\divin\CLionProjects\OS_HW5\main.c -o CMakeFiles\OS_HW5.dir\main.c.s
 
-CMakeFiles/OS_HW5.dir/pcc_client..c.obj: CMakeFiles/OS_HW5.dir/flags.make
-CMakeFiles/OS_HW5.dir/pcc_client..c.obj: ../pcc_client..c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\divin\CLionProjects\OS_HW5\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/OS_HW5.dir/pcc_client..c.obj"
-	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\OS_HW5.dir\pcc_client..c.obj -c C:\Users\divin\CLionProjects\OS_HW5\pcc_client..c
+CMakeFiles/OS_HW5.dir/pcc_client.c.obj: CMakeFiles/OS_HW5.dir/flags.make
+CMakeFiles/OS_HW5.dir/pcc_client.c.obj: ../pcc_client.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\divin\CLionProjects\OS_HW5\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/OS_HW5.dir/pcc_client.c.obj"
+	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\OS_HW5.dir\pcc_client.c.obj -c C:\Users\divin\CLionProjects\OS_HW5\pcc_client.c
 
-CMakeFiles/OS_HW5.dir/pcc_client..c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/OS_HW5.dir/pcc_client..c.i"
-	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\divin\CLionProjects\OS_HW5\pcc_client..c > CMakeFiles\OS_HW5.dir\pcc_client..c.i
+CMakeFiles/OS_HW5.dir/pcc_client.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/OS_HW5.dir/pcc_client.c.i"
+	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\divin\CLionProjects\OS_HW5\pcc_client.c > CMakeFiles\OS_HW5.dir\pcc_client.c.i
 
-CMakeFiles/OS_HW5.dir/pcc_client..c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/OS_HW5.dir/pcc_client..c.s"
-	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\divin\CLionProjects\OS_HW5\pcc_client..c -o CMakeFiles\OS_HW5.dir\pcc_client..c.s
+CMakeFiles/OS_HW5.dir/pcc_client.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/OS_HW5.dir/pcc_client.c.s"
+	C:\PROGRA~2\TDM-GC~1\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\divin\CLionProjects\OS_HW5\pcc_client.c -o CMakeFiles\OS_HW5.dir\pcc_client.c.s
 
 CMakeFiles/OS_HW5.dir/pcc_server.c.obj: CMakeFiles/OS_HW5.dir/flags.make
 CMakeFiles/OS_HW5.dir/pcc_server.c.obj: ../pcc_server.c
@@ -117,14 +117,14 @@ CMakeFiles/OS_HW5.dir/pcc_server.c.s: cmake_force
 # Object files for target OS_HW5
 OS_HW5_OBJECTS = \
 "CMakeFiles/OS_HW5.dir/main.c.obj" \
-"CMakeFiles/OS_HW5.dir/pcc_client..c.obj" \
+"CMakeFiles/OS_HW5.dir/pcc_client.c.obj" \
 "CMakeFiles/OS_HW5.dir/pcc_server.c.obj"
 
 # External object files for target OS_HW5
 OS_HW5_EXTERNAL_OBJECTS =
 
 OS_HW5.exe: CMakeFiles/OS_HW5.dir/main.c.obj
-OS_HW5.exe: CMakeFiles/OS_HW5.dir/pcc_client..c.obj
+OS_HW5.exe: CMakeFiles/OS_HW5.dir/pcc_client.c.obj
 OS_HW5.exe: CMakeFiles/OS_HW5.dir/pcc_server.c.obj
 OS_HW5.exe: CMakeFiles/OS_HW5.dir/build.make
 OS_HW5.exe: CMakeFiles/OS_HW5.dir/linklibs.rsp
