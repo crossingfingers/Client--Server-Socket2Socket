@@ -16,14 +16,17 @@
 #include <stdint.h>
 #include <signal.h>
 
-//TODO: ADD SIGNAL
-//TODO : add error checks
-//TODO : ADD MEM CHECKS
-/*global variable to keep printable character count*/
+
+/*global variables to keep printable character count*/
 uint32_t pcc_total[127] = {0};
+/*shutdown signal to shutdown server after next client tcp connection*/
 int shutdown_sig = 0;
+/*connection file descriptor*/
 int connfd = -1;
 
+/**
+ * Shutdown method, prints printable file count
+ */
 void shutdownServer() {
     int i;
     for (i = 32; i < 127; i++) {
@@ -32,12 +35,19 @@ void shutdownServer() {
     exit(0);
 }
 
+/**
+ * handler for SIGUSR1 signal
+ * either shuts down server, or raises shutdown flag (shutdown after tcp connection end)
+ */
 void SIGUSR1_handler() {
     if (connfd < 0) { shutdownServer(); }
     else { shutdown_sig = 1; }
 }
 
-
+/**
+ * receives file byte size method
+ * @return size of file to be received (N)
+ */
 uint32_t receiveFileByteSize() {
     uint32_t N;
     int bytes_received = 0;
@@ -45,98 +55,144 @@ uint32_t receiveFileByteSize() {
     while (bytes_written < sizeof(N)) {
         bytes_received = read(connfd, &N + bytes_written, sizeof(N) - bytes_written);
         if (bytes_received < 0) {
-            fprintf(stderr, "Error receiving from client bytes: %s\n", strerror(errno));
-            exit(1);
+            if ((errno != ETIMEDOUT) && (errno != ECONNRESET) && (errno != EPIPE)) {
+                fprintf(stderr, "Error receiving from client bytes: %s\n", strerror(errno));
+                exit(1);
+            } else {
+                fprintf(stderr, "TCP ERROR while receiving from client: %s\n", strerror(errno));
+                return -1;
+            }
         }
+        if (bytes_received == 0) { break; }
         bytes_written += bytes_received;
+    }
+    if (bytes_written != sizeof(uint32_t)) {
+        fprintf(stderr, "client killed unexpectedly: %s\n", strerror(errno));
+        return -1;
     }
     N = ntohl(N);
     return N;
 }
 
-int receiveFileBytes(unsigned char *buffer, uint32_t N) {
+/**
+ * receives file bytes from client
+ * @param buffer - to save data to
+ * @param N  - number of bytes
+ * @return  - bytes written or -1 if critical error
+ */
+int receiveFileBytes(char *buffer, uint32_t N) {
     int bytes_received = 0;
     int bytes_written = 0;
 
     while (bytes_written < N) {
         bytes_received = read(connfd, buffer + bytes_written, N - bytes_written);
         if (bytes_received < 0) {
-            fprintf(stderr, "Error receiving from client bytes: %s\n", strerror(errno));
-            exit(1);
+            if ((errno != ETIMEDOUT) && (errno != ECONNRESET) && (errno != EPIPE)) {
+                fprintf(stderr, "Error receiving from client bytes: %s\n", strerror(errno));
+                exit(1);
+            } else {
+                fprintf(stderr, "TCP ERROR while receiving from client: %s\n", strerror(errno));
+                return -1;
+            }
         }
+        if (bytes_received == 0) { break; }
         bytes_written += bytes_received;
     }
+    if (bytes_written != N) {
+        fprintf(stderr, "client killed unexpectedly: %s\n", strerror(errno));
+        return -1;
+    }
     return bytes_written;
-
 }
 
-void sendPrintedCharCount(uint32_t num_prints) {
+/**
+ * sends to client printable character count
+ * @param num_prints - number of printable characters
+ * @return
+ */
+int sendPrintedCharCount(uint32_t num_prints) {
     uint32_t num_prints_for_net = htonl(num_prints);
     int bytes_written = 0;
     int bytes_sent = 0;
-    printf("sending %u\n", num_prints_for_net);
     while (bytes_written < sizeof(uint32_t)) {
         bytes_sent = write(connfd, &num_prints_for_net + bytes_written, 4 - bytes_written);
-        assert(bytes_sent >= 0);
-        printf("Server wrote %d Bytes\n", bytes_sent);
+        if (bytes_sent < 0) {
+            if ((errno != ETIMEDOUT) && (errno != ECONNRESET) && (errno != EPIPE)) {
+                fprintf(stderr, "Error sending to client bytes: %s\n", strerror(errno));
+                exit(1);
+            } else {
+                fprintf(stderr, "TCP ERROR while sending to client: %s\n", strerror(errno));
+                return -1;
+            }
+        }
+        if (bytes_sent == 0) { break; }
         bytes_written += bytes_sent;
     }
+    if (bytes_written != sizeof(uint32_t)) {
+        fprintf(stderr, "client killed unexpectedly: %s\n", strerror(errno));
+        return -1;
+    }
+    return 0;
 }
 
-void updatePCC(unsigned char *buffer, uint32_t N) {
+
+/**
+ * updates PCC structure only if full tcp connection has finished correctly
+ * @param buffer - contains received chars
+ * @param N  - number of bytes
+ */
+void updatePCC(char *buffer, uint32_t N) {
     int i;
     char c;
-    printf("printing bytes: ");
     for (i = 0; i < N; i++) {
         c = buffer[i];
         if ((32 <= c) && (c <= 126)) {
-            pcc_total[(uint32_t)c]++;
-            printf("%c", c);
+            pcc_total[(uint32_t) c]++;
         }
     }
-    printf("\n");
 }
 
-
-uint32_t countPrintable(unsigned char *buffer, uint32_t N) {
+/**
+ * counts number of printable characters
+ * @param buffer  - contains received bytes
+ * @param N  - number of bytes
+ * @return  - number of printable characters
+ */
+uint32_t countPrintable(char *buffer, uint32_t N) {
     int i;
     char c;
     uint32_t counter = 0;
-    printf("printing bytes: ");
     for (i = 0; i < N; i++) {
         c = buffer[i];
         if ((32 <= c) && (c <= 126)) {
-            printf("%c", c);
             counter++;
         }
     }
-    printf("\n");
     return counter;
 }
 
 
 int main(int argc, char *argv[]) {
     int listenfd = -1;
-    unsigned char *buffer;
+    char *buffer;
     char *server_port;
     int bytes_received = 0;
     int res;
     uint32_t N;
     uint32_t num_prints_int;
     struct sockaddr_in serv_addr;
-    struct sockaddr_in my_addr; //TODO: REMOVE
-    struct sockaddr_in peer_addr; //TODO : REMOVE
+    struct sockaddr_in peer_addr;
     struct sigaction sigusr1;
     socklen_t addrsize = sizeof(struct sockaddr_in);
 
-    /*read inputs*/
+    /*reads input*/
     if (argc != 2) {
-        fprintf(stderr, "Error, Arguments, number %s", strerror((errno)));
+        fprintf(stderr, "Error, Arguments, number %s\n", strerror((errno)));
         exit(1);
     } else { server_port = argv[1]; }
 
 
-    /*set SIGUSR1 */ //TODO : CHECK
+    /*set SIGUSR1 */
     memset(&sigusr1, 0, sizeof(sigusr1));
     sigusr1.sa_handler = &SIGUSR1_handler;
     sigemptyset(&sigusr1.sa_mask);
@@ -154,8 +210,8 @@ int main(int argc, char *argv[]) {
     }
 
     /*set reuse address*/
-    res = setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
-    if( res< 0){
+    res = setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &(int) {1}, sizeof(int));
+    if (res < 0) {
         fprintf(stderr, "Error in setsockopt, %s\n", strerror(errno));
         exit(1);
     }
@@ -187,29 +243,47 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        getsockname(connfd, (struct sockaddr *) &my_addr, &addrsize); //TODO: REMOVE
-        getpeername(connfd, (struct sockaddr *) &peer_addr, &addrsize); //TODO: REMOVE
-        printf("Server: Client connected.\n""\t\tClient IP: %s Client Port: %d\n", inet_ntoa(peer_addr.sin_addr),
-               ntohs(peer_addr.sin_port)); //TODO: REMOVE
-        printf("\t\tServer IP: %s Server Port: %d\n", inet_ntoa(my_addr.sin_addr),
-               ntohs(my_addr.sin_port));//TODO: REMOVE
+        /*receive file byte size, if encountered error (N=-1), finish connection & continue*/
+        N = receiveFileByteSize();
+        if (N < 0) {
+            close(connfd);
+            connfd = -1;
+            continue;
+        }
 
-        N = receiveFileByteSize(); //TODO : ADD ERROR CHECK
-        buffer = (unsigned char *) malloc(N * sizeof(char));
+        /*allocate buffer size, (N bytes)*/
+        buffer = (char *) malloc(N * sizeof(char));
+        if (buffer == NULL) {
+            fprintf(stderr, "Malloc Failed, Error %s\n", strerror(errno));
+            exit(1);
+        }
 
-        printf("Server recieved N=%u\n", N); //TODO: REMOVE
-        printf("Server waiting for read of %d bytes\n", N);//TODO: REMOVE
+        /*receives bytes from client, if byte count equals -1, error occurred, finish connection & continue*/
+        bytes_received = receiveFileBytes(buffer, N);
+        if (bytes_received < 0) {
+            close(connfd);
+            connfd = -1;
+            free(buffer);
+            continue;
+        }
 
-        bytes_received = receiveFileBytes(buffer, N); //TODO : ADD ERROR CHECK
+        /*count number of printable characters in buffer*/
+        num_prints_int = countPrintable(buffer, N);
 
-        printf("Server received %d bytes\n", bytes_received); //TODO: REMOVE
-        num_prints_int = countPrintable(buffer, N);  //TODO : ADD ERROR CHECK
-        sendPrintedCharCount(num_prints_int); //TODO : ADD ERROR CHECK
+        /*send to client PCC, if res =-1, error occurred, finish connection & continue*/
+        res = sendPrintedCharCount(num_prints_int);
+        if (res < 0) {
+            close(connfd);
+            connfd = -1;
+            free(buffer);
+            continue;
+        }
 
+        /*if all is OK, update PCC structure, free buffer and continue*/
         updatePCC(buffer, N);
         free(buffer);
         close(connfd);
-        connfd=-1;
+        connfd = -1;
     }
     exit(0);
 }
